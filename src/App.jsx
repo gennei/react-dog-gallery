@@ -1,4 +1,6 @@
 import React from "react";
+import { useEffect, useState } from "react";
+import { fetchImages } from "./api";
 
 function Header() {
   return (
@@ -12,38 +14,45 @@ function Header() {
   );
 }
 
-function Image() {
-  const image = {
-    url: "https://images.dog.ceo/breeds/shiba/shiba-8.jpg",
-    alt: "cute dog!",
-  };
+function Image(props) {
   return (
     <div className="card">
       <div className="card-image">
         <figure className="image">
-          <img src={image.url} alt={image.alt} />
+          <img src={props.url} />
         </figure>
       </div>
     </div>
   );
 }
 
-function Gallery() {
+function Gallery(props) {
   return (
     <div className="columns is-vcentered is-multiline">
-      <div className="column is-3">
-        <Image />
-      </div>
+      {props.urls.map((url) => {
+        return (
+          <div key={url} className="column is-3">
+            <Image url={url} />
+          </div>
+        );
+      })}
     </div>
   );
 }
 
 function Main() {
+  const [urls, setUrls] = useState([]);
+  useEffect(() => {
+    fetchImages("shiba").then((urls) => {
+      setUrls(urls);
+    });
+  }, []);
+
   return (
     <main>
       <section className="section">
         <div className="container">
-          <Gallery />
+          <Gallery urls={urls} />
         </div>
       </section>
     </main>
